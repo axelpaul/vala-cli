@@ -87,7 +87,32 @@ Defaults to production. Set `VALA_ENV=test` to talk to the test backend
 
 ## Agent-friendly
 
-JSON output is the primary interface. Stable shapes, predictable exit codes:
+JSON output is the primary interface. Stable shapes, predictable exit codes,
+plus dedicated commands for agents:
+
+```sh
+vala doctor --json     # pre-flight: auth state, token expiry, server reachable
+vala schema --json     # full response-shape catalog for all commands
+vala schema today      # shape for one command
+vala help --json       # command list (name, description, usage, flags)
+vala version           # CLI version
+```
+
+### OpenClaw integration
+
+This repo ships a `SKILL.md` at the root. To use it as an
+[OpenClaw](https://github.com/openclaw/openclaw) skill:
+
+```sh
+mkdir -p ~/.openclaw/workspace/skills/vala
+ln -s "$(pwd)/SKILL.md" ~/.openclaw/workspace/skills/vala/SKILL.md
+```
+
+OpenClaw will pick it up on the next workspace reload. The skill description
+covers when to trigger, the data model, mutating-call safety, and the full
+command surface.
+
+
 
 | Exit code | Meaning |
 |---|---|
@@ -95,9 +120,6 @@ JSON output is the primary interface. Stable shapes, predictable exit codes:
 | 1 | Runtime / network error |
 | 2 | Auth required or expired (run `vala login`) |
 | 64 | Bad usage (missing/invalid flags) |
-
-`vala help --json` returns the full command schema so you can register it
-as a tool with another agent.
 
 ## Development
 

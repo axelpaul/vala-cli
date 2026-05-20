@@ -2,18 +2,23 @@
 
 // vala — CLI for the Vala Leikskóli parent app.
 
+import pkg from "../package.json" with { type: "json" };
 import { absentCommand } from "./commands/absent.ts";
 import { attendanceCommand } from "./commands/attendance.ts";
 import { chatCommand } from "./commands/chat.ts";
+import { doctorCommand } from "./commands/doctor.ts";
 import { eventsCommand } from "./commands/events.ts";
 import { kidsCommand } from "./commands/kids.ts";
 import { loginCommand } from "./commands/login.ts";
 import { logoutCommand } from "./commands/logout.ts";
 import { lunchCommand } from "./commands/lunch.ts";
+import { schemaCommand } from "./commands/schema.ts";
 import { todayCommand } from "./commands/today.ts";
 import { whoamiCommand } from "./commands/whoami.ts";
 import { ApiError, AuthError } from "./lib/api.ts";
 import { color, dieAuth } from "./lib/output.ts";
+
+export const VERSION = pkg.version;
 
 // --- arg parsing ----------------------------------------------------------
 
@@ -44,6 +49,15 @@ const globalFlags = {
 	json: hasFlag("json"),
 	pretty: hasFlag("pretty"),
 };
+
+if (hasFlag("version") || command === "version") {
+	if (globalFlags.json) {
+		console.log(JSON.stringify({ version: VERSION, name: pkg.name }));
+	} else {
+		console.log(`vala ${VERSION}`);
+	}
+	process.exit(0);
+}
 
 // --- help -----------------------------------------------------------------
 
@@ -98,6 +112,21 @@ const COMMANDS: CommandSpec[] = [
 		name: "chat",
 		description: "Recent chat messages from the school. Latest 20 by default.",
 		usage: "vala chat [--child NAME] [--limit N]",
+	},
+	{
+		name: "doctor",
+		description: "Pre-flight check: auth state, token expiry, API reachable, children visible.",
+		usage: "vala doctor",
+	},
+	{
+		name: "schema",
+		description: "Print the JSON response shape of a command. Agent-discoverability hook.",
+		usage: "vala schema [<command>]",
+	},
+	{
+		name: "version",
+		description: "Print the CLI version.",
+		usage: "vala version",
 	},
 ];
 
@@ -199,6 +228,12 @@ async function main(): Promise<void> {
 				raw: hasFlag("raw"),
 				...globalFlags,
 			});
+			return;
+		case "doctor":
+			await doctorCommand(globalFlags);
+			return;
+		case "schema":
+			await schemaCommand({ command: positional[1], ...globalFlags });
 			return;
 		default:
 			console.error(color.red(`Unknown command: ${command}`));
