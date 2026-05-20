@@ -1,0 +1,25 @@
+# Reverse-engineering artifacts — not source
+*.xapk
+*.apk
+xapk_extracted/
+base_apk/
+decompiled/
+
+# Node / Bun
+node_modules/
+# bun.lock IS committed — pin the install for everyone
+
+# Build outputs
+/vala
+dist/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local
+.env
+.env.local
