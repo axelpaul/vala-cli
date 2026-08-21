@@ -72,8 +72,11 @@ const COMMANDS: CommandSpec[] = [
 	{
 		name: "login",
 		description: "Authenticate via Auðkenni (rafræn skilríki). Interactive by default.",
-		usage: "vala login [--phone <number>]",
-		flags: [{ name: "phone", description: "Phone number registered with Auðkenni." }],
+		usage: "vala login [--phone <number> | --kennitala <10 digits>]",
+		flags: [
+			{ name: "phone", description: "Phone number registered with Auðkenni." },
+			{ name: "kennitala", description: "Kennitala for the Auðkennisappið login route." },
+		],
 	},
 	{ name: "logout", description: "Clear local session." },
 	{ name: "whoami", description: "Show the logged-in user." },
@@ -161,6 +164,7 @@ async function main(): Promise<void> {
 		case "login":
 			await loginCommand({
 				phone: getFlag("phone"),
+				kennitala: getFlag("kennitala"),
 				...globalFlags,
 			});
 			return;

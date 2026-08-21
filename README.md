@@ -15,20 +15,27 @@ on your phone.
 git clone <repo> vala-cli && cd vala-cli
 bun install
 bun link              # exposes `vala` on your PATH
-vala login --phone <your-number>
+vala login --phone <phone-number>
 ```
 
 ## Auth
 
-Uses the same phone-based Auðkenni flow as the mobile app — no browser callback,
-works fine over SSH on a headless box.
+Authenticate with Auðkenni from a headless shell. Choose either the phone flow
+or the Auðkennisappið flow initiated by kennitala; both wait for approval on
+your phone.
 
 ```sh
 vala login                  # interactive, asks for phone
-vala login --phone 7771234
+vala login --phone <phone-number>
+vala login --kennitala <10-digit-kennitala>
 vala logout
 vala whoami
 ```
+
+`--phone` and `--kennitala` are mutually exclusive. Use `--kennitala` when
+you prefer the **App** option in Auðkenni: the CLI starts Vala's parent-app
+Signet flow, prints the Auðkenni confirmation code, and polls until approval
+completes.
 
 The session token is cached at `~/.config/vala/auth.json` (mode `0600`).
 That file also contains your name, kennitala, and phone — fine for a single-user
@@ -63,7 +70,7 @@ Most commands work for both your kids at once if you don't filter.
 Set a default once and you can drop `--child`:
 
 ```sh
-vala kids --set-default Urður
+vala kids --set-default <child-name>
 ```
 
 The filter matches by `child_id` or a case-insensitive substring of the name.
@@ -75,7 +82,7 @@ vala today                                     # what's happening right now
 vala lunch --week                              # last week of lunch ratings, weekdays only
 vala attendance --date 2026-05-15              # specific day
 vala events --days 60                          # next 60 days of school calendar
-vala chat --child Urður --limit 5              # last 5 messages
+vala chat --child <child-name> --limit 5        # last 5 messages
 vala absent --type sick                        # register today as a sick day (asks to confirm)
 vala absent --type sick --date 2026-05-21 --yes # non-interactive
 ```
