@@ -161,6 +161,11 @@ async function main(): Promise<void> {
 	}
 
 	switch (command) {
+		case "serve": {
+			const { serve } = await import("./mcp/server.ts");
+			await serve();
+			return;
+		}
 		case "login":
 			await loginCommand({
 				phone: getFlag("phone"),
