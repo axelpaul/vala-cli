@@ -1,11 +1,11 @@
 // vala attendance — arrival / departure / sleep / eat for a day.
 
-import { items, ValaClient } from "../lib/api.ts";
-import { matchChild } from "../lib/child.ts";
-import { formatTime, isoDate, ratingColor, todayIso } from "../lib/format.ts";
+import { ValaClient } from "../lib/api.ts";
+import { formatTime, ratingColor } from "../lib/format.ts";
 import { color, dieAuth, isJsonMode, printJson } from "../lib/output.ts";
-import { loadAuth, loadConfig } from "../lib/storage.ts";
-import type { AttendanceChild, AttendanceSegment } from "../lib/types.ts";
+import { fetchAttendance } from "../lib/queries.ts";
+import { loadAuth } from "../lib/storage.ts";
+import type { AttendanceSegment } from "../lib/types.ts";
 import { EAT_LABELS_IS } from "../lib/types.ts";
 
 interface AttendanceFlags {
@@ -21,21 +21,20 @@ export async function attendanceCommand(flags: AttendanceFlags): Promise<void> {
 	const auth = loadAuth();
 	if (!auth) dieAuth("not_logged_in", json);
 
-	const date = flags.date ? isoDate(flags.date) : todayIso();
-	const client = ValaClient.fromAuth(auth);
-	const envelope = await client.getAttendance(date, date);
+	const { result, raw } = await fetchAttendance(ValaClient.fromAuth(auth), {
+		date: flags.date,
+		child: flags.child,
+	});
 
 	if (flags.raw) {
-		console.log(JSON.stringify(envelope, null, 2));
+		console.log(JSON.stringify(raw, null, 2));
 		return;
 	}
 
-	const all = items(envelope);
-	const filter = flags.child ?? loadConfig().defaultChildName;
-	const rows = filter ? all.filter((r) => matchChild(r, filter)) : all;
+	const { date, items: rows } = result;
 
 	if (json) {
-		printJson({ date, items: rows });
+		printJson(result);
 		return;
 	}
 

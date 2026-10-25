@@ -1,5 +1,6 @@
-import { AuthError, first, ValaClient } from "../lib/api.ts";
+import { AuthError, ValaClient } from "../lib/api.ts";
 import { color, dieAuth, isJsonMode, printJson } from "../lib/output.ts";
+import { fetchUser } from "../lib/queries.ts";
 import { loadAuth } from "../lib/storage.ts";
 
 export async function whoamiCommand(flags: { json?: boolean; pretty?: boolean }): Promise<void> {
@@ -9,8 +10,7 @@ export async function whoamiCommand(flags: { json?: boolean; pretty?: boolean })
 
 	const client = ValaClient.fromAuth(auth);
 	try {
-		const envelope = await client.getUser();
-		const user = first(envelope);
+		const user = await fetchUser(client);
 
 		if (json) {
 			printJson(user ?? null);

@@ -1,4 +1,7 @@
-// Auth + config persistence in ~/.config/vala/ with 0600 perms.
+// Auth + config persistence with 0600 perms.
+//
+// Directory: $VALA_CONFIG_DIR, else $XDG_CONFIG_HOME/vala, else ~/.config/vala.
+// Resolved on every call so tests (and the MCP server) can point it elsewhere.
 
 import {
 	chmodSync,
@@ -13,13 +16,18 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import type { AuthState, UserConfig } from "./types.ts";
 
-const CONFIG_DIR = join(homedir(), ".config", "vala");
-const AUTH_PATH = join(CONFIG_DIR, "auth.json");
-const CONFIG_PATH = join(CONFIG_DIR, "config.json");
+export function configDir(): string {
+	if (process.env.VALA_CONFIG_DIR) return process.env.VALA_CONFIG_DIR;
+	const xdg = process.env.XDG_CONFIG_HOME;
+	return join(xdg && xdg.length > 0 ? xdg : join(homedir(), ".config"), "vala");
+}
+const authPath = () => join(configDir(), "auth.json");
+const configPath = () => join(configDir(), "config.json");
 
 function ensureDir(): void {
-	if (!existsSync(CONFIG_DIR)) {
-		mkdirSync(CONFIG_DIR, { recursive: true, mode: 0o700 });
+	const dir = configDir();
+	if (!existsSync(dir)) {
+		mkdirSync(dir, { recursive: true, mode: 0o700 });
 	}
 }
 
@@ -43,27 +51,34 @@ function readJson<T>(path: string): T | null {
 }
 
 export function saveAuth(state: AuthState): void {
-	writeSecure(AUTH_PATH, state);
+	writeSecure(authPath(), state);
 }
 
 export function loadAuth(): AuthState | null {
-	return readJson<AuthState>(AUTH_PATH);
+	return readJson<AuthState>(authPath());
 }
 
 export function clearAuth(): void {
-	if (existsSync(AUTH_PATH)) unlinkSync(AUTH_PATH);
+	const path = authPath();
+	if (existsSync(path)) unlinkSync(path);
 }
 
 export function saveConfig(cfg: UserConfig): void {
-	writeSecure(CONFIG_PATH, cfg);
+	writeSecure(configPath(), cfg);
 }
 
 export function loadConfig(): UserConfig {
-	return readJson<UserConfig>(CONFIG_PATH) ?? {};
+	return readJson<UserConfig>(configPath()) ?? {};
 }
 
 export const paths = {
-	dir: CONFIG_DIR,
-	auth: AUTH_PATH,
-	config: CONFIG_PATH,
+	get dir() {
+		return configDir();
+	},
+	get auth() {
+		return authPath();
+	},
+	get config() {
+		return configPath();
+	},
 };

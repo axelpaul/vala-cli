@@ -17,6 +17,7 @@ import { todayCommand } from "./commands/today.ts";
 import { whoamiCommand } from "./commands/whoami.ts";
 import { ApiError, AuthError } from "./lib/api.ts";
 import { color, dieAuth } from "./lib/output.ts";
+import { UsageError } from "./lib/queries.ts";
 
 export const VERSION = pkg.version;
 
@@ -125,6 +126,11 @@ const COMMANDS: CommandSpec[] = [
 		name: "schema",
 		description: "Print the JSON response shape of a command. Agent-discoverability hook.",
 		usage: "vala schema [<command>]",
+	},
+	{
+		name: "serve",
+		description: `Start the MCP server on stdio (read-only; set VALA_MCP_ENABLE_WRITES=1 for register_absence).`,
+		usage: "vala serve",
 	},
 	{
 		name: "version",
@@ -260,5 +266,5 @@ main().catch((err: unknown) => {
 	} else {
 		console.error(color.red(`Error: ${msg}`));
 	}
-	process.exit(1);
+	process.exit(err instanceof UsageError ? 64 : 1);
 });

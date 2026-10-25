@@ -1,11 +1,10 @@
 // vala events — school calendar events (parent meetings, holidays, planning days).
 
-import { items, ValaClient } from "../lib/api.ts";
-import { matchChild } from "../lib/child.ts";
-import { addDays, isAllDay, isoDate, todayIso } from "../lib/format.ts";
+import { ValaClient } from "../lib/api.ts";
+import { isAllDay } from "../lib/format.ts";
 import { color, die, dieAuth, isJsonMode, printJson } from "../lib/output.ts";
-import { loadAuth, loadConfig } from "../lib/storage.ts";
-import type { CalendarEvent } from "../lib/types.ts";
+import { fetchEvents } from "../lib/queries.ts";
+import { loadAuth } from "../lib/storage.ts";
 
 interface EventsFlags {
 	json?: boolean;
@@ -34,29 +33,26 @@ export async function eventsCommand(flags: EventsFlags): Promise<void> {
 	const auth = loadAuth();
 	if (!auth) dieAuth("not_logged_in", json);
 
-	const from = flags.from ? isoDate(flags.from) : todayIso();
-	const days = flags.days ? Number(flags.days) : 30;
-	if (Number.isNaN(days) || days < 1) die("Invalid --days value", 64, json);
-	const to = flags.to ? isoDate(flags.to) : addDays(from, days - 1);
-
-	const client = ValaClient.fromAuth(auth);
-	const envelope = await client.getCalendarEvents(from, to);
+	const days = flags.days ? Number(flags.days) : undefined;
+	if (days !== undefined && (!Number.isInteger(days) || days < 1)) {
+		die("Invalid --days value", 64, json);
+	}
+	const { result, raw } = await fetchEvents(ValaClient.fromAuth(auth), {
+		from: flags.from,
+		to: flags.to,
+		days,
+		child: flags.child,
+	});
 
 	if (flags.raw) {
-		console.log(JSON.stringify(envelope, null, 2));
+		console.log(JSON.stringify(raw, null, 2));
 		return;
 	}
 
-	let events: CalendarEvent[] = items(envelope);
-
-	const filter = flags.child ?? loadConfig().defaultChildName;
-	if (filter) events = events.filter((e) => matchChild(e, filter));
-
-	// Sort chronologically.
-	events.sort((a, b) => (a.start_date < b.start_date ? -1 : 1));
+	const { from, to, items: events } = result;
 
 	if (json) {
-		printJson({ from, to, items: events });
+		printJson(result);
 		return;
 	}
 

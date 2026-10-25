@@ -1,11 +1,10 @@
 // vala today — combined snapshot: arrival, departure, lunch rating + menu.
 
-import { items, ValaClient } from "../lib/api.ts";
-import { matchChild } from "../lib/child.ts";
-import { formatTime, ratingColor, todayIso } from "../lib/format.ts";
+import { ValaClient } from "../lib/api.ts";
+import { formatTime, ratingColor } from "../lib/format.ts";
 import { color, dieAuth, isJsonMode, printJson } from "../lib/output.ts";
-import { loadAuth, loadConfig } from "../lib/storage.ts";
-import type { AttendanceChild, MenuSchool } from "../lib/types.ts";
+import { fetchToday } from "../lib/queries.ts";
+import { loadAuth } from "../lib/storage.ts";
 import { EAT_LABELS_IS } from "../lib/types.ts";
 
 interface TodayFlags {
@@ -20,26 +19,17 @@ export async function todayCommand(flags: TodayFlags): Promise<void> {
 	const auth = loadAuth();
 	if (!auth) dieAuth("not_logged_in", json);
 
-	const date = todayIso();
-	const client = ValaClient.fromAuth(auth);
-	const [attEnv, menuEnv] = await Promise.all([
-		client.getAttendance(date, date),
-		client.getMenu(date, date),
-	]);
+	const { result, raw } = await fetchToday(ValaClient.fromAuth(auth), { child: flags.child });
 
 	if (flags.raw) {
-		console.log(JSON.stringify({ date, attendance: attEnv, menu: menuEnv }, null, 2));
+		console.log(JSON.stringify(raw, null, 2));
 		return;
 	}
 
-	let children: AttendanceChild[] = items(attEnv);
-	const menus: MenuSchool[] = items(menuEnv);
-
-	const filter = flags.child ?? loadConfig().defaultChildName;
-	if (filter) children = children.filter((r) => matchChild(r, filter));
+	const { date, children, menus } = result;
 
 	if (json) {
-		printJson({ date, children, menus });
+		printJson(result);
 		return;
 	}
 

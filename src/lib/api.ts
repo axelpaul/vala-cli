@@ -4,6 +4,7 @@
 // Auth: the token returned by check-login is sent on every request in a custom
 // `token` header (lowercase). No cookies, no Authorization: Bearer.
 
+import pkg from "../../package.json" with { type: "json" };
 import type {
 	AbsenceType,
 	AttendanceChild,
@@ -31,7 +32,7 @@ export function defaultBaseUrl(): string {
 	return process.env.VALA_ENV === "test" ? TEST_URL : PROD_URL;
 }
 
-export const USER_AGENT = "vala-cli/0.1.0 (+https://github.com/axelpaul/vala-cli)";
+export const USER_AGENT = `vala-cli/${pkg.version} (+https://github.com/axelpaul/vala-cli)`;
 
 export class ApiError extends Error {
 	constructor(
