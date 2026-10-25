@@ -1,13 +1,33 @@
 {
 	"name": "vala-cli",
-	"version": "0.1.0",
-	"description": "CLI for the Vala Leikskóli parent app — lunch ratings, attendance, and more from your terminal.",
+	"version": "0.2.0",
+	"description": "Unofficial CLI and MCP server for the Vala Leikskóli parent app — lunch, attendance, events, chat and absences from your terminal.",
+	"license": "MIT",
+	"author": "Axel Paul Gunnarsson",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/axelpaul/vala-cli.git"
+	},
+	"homepage": "https://github.com/axelpaul/vala-cli#readme",
+	"bugs": {
+		"url": "https://github.com/axelpaul/vala-cli/issues"
+	},
+	"engines": {
+		"bun": ">=1.1.0"
+	},
 	"module": "src/index.ts",
 	"type": "module",
 	"private": true,
 	"bin": {
 		"vala": "src/index.ts"
 	},
+	"files": [
+		"src/**/*.ts",
+		"!src/**/*.test.ts",
+		"README.md",
+		"SKILL.md",
+		"LICENSE"
+	],
 	"scripts": {
 		"start": "bun src/index.ts",
 		"dev": "bun --watch src/index.ts",

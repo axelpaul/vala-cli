@@ -11,14 +11,10 @@ metadata:
         "install":
           [
             {
-              "id": "git",
+              "id": "bun",
               "kind": "manual",
-              "label": "Clone + bun link",
-              "steps":
-                [
-                  "git clone https://github.com/axelpaul/vala-cli ~/code/vala-cli",
-                  "cd ~/code/vala-cli && bun install && bun link",
-                ],
+              "label": "Install with Bun",
+              "steps": ["bun add -g github:axelpaul/vala-cli"],
             },
           ],
       },
@@ -42,6 +38,12 @@ a script or agent context — without opening the mobile app. Especially:
 - **"Did the school send me a message?"** — `vala chat`.
 - **"My kid is sick today, register an absence."** — `vala absent --type sick`
   (mutating; requires `--yes` to skip confirmation).
+
+## MCP alternative
+
+The same functionality is available as an MCP server: `vala serve` (read-only tools
+`whoami`, `kids`, `lunch`, `attendance`, `today`, `events`, `chat`, `doctor`;
+`register_absence` only with `VALA_MCP_ENABLE_WRITES=1` and `confirm: true`).
 
 ## Before doing anything
 

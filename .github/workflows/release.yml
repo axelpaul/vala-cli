@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+
+      - name: Build binaries
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          for target in linux-x64 linux-arm64 darwin-x64 darwin-arm64 windows-x64; do
+            os="${target%-*}"
+            arch="${target#*-}"
+            out="dist/vala-${os}-${arch}"
+            if [ "$os" = "windows" ]; then out="${out}.exe"; fi
+            bun build --compile --minify --target="bun-${target}" src/index.ts --outfile "$out"
+          done
+          cd dist && sha256sum vala-* > SHA256SUMS && cat SHA256SUMS
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/vala-*
+            dist/SHA256SUMS
+          generate_release_notes: true
