@@ -34,11 +34,11 @@ const SCHEMAS: Record<string, CommandSchema> = {
 			language: "string",
 		},
 		example: {
-			user_id: 118660,
-			name: "Axel Paul Gunnarsson",
+			user_id: 10001,
+			name: "Jón Jónsson",
 			ssn: "1234567890",
 			email: "you@example.com",
-			phone: "5812345",
+			phone: "5555555",
 			language: "IS",
 		},
 	},
@@ -63,12 +63,12 @@ const SCHEMAS: Record<string, CommandSchema> = {
 		example: {
 			children: [
 				{
-					child_id: 86048,
-					name: "Urður Lóa Axelsdóttir",
-					ssn: "1001222270",
-					placement_id: 198421,
-					school_id: 243,
-					school_name: "Langholt",
+					child_id: 12345,
+					name: "Jóna Jónsdóttir",
+					ssn: "0101201230",
+					placement_id: 54321,
+					school_id: 100,
+					school_name: "Dæmiskóli",
 					hour_from: "08:00",
 					hour_to: "16:30",
 				},
@@ -102,8 +102,8 @@ const SCHEMAS: Record<string, CommandSchema> = {
 			children: ["see attendance schema"],
 			menus: [
 				{
-					school_id: 243,
-					school: "Langholt",
+					school_id: 100,
+					school: "Dæmiskóli",
 					menu: [
 						{
 							menu_date: "2026-05-20T00:00:00Z",
@@ -147,9 +147,9 @@ const SCHEMAS: Record<string, CommandSchema> = {
 			date: "2026-05-15",
 			items: [
 				{
-					child_id: 86048,
-					child_name: "Urður Lóa Axelsdóttir",
-					school_name: "Langholt",
+					child_id: 12345,
+					child_name: "Jóna Jónsdóttir",
+					school_name: "Dæmiskóli",
 					attendance: [
 						{
 							time_from: "2026-05-15T08:52:00Z",
@@ -192,8 +192,8 @@ const SCHEMAS: Record<string, CommandSchema> = {
 					date: "2026-05-15",
 					menu: "Aðalréttur\nÍslensk kjötsúpa og skólabolla\nVeganréttur\n…",
 					eat: "verygood",
-					child_name: "Urður Lóa Axelsdóttir",
-					school_name: "Langholt",
+					child_name: "Jóna Jónsdóttir",
+					school_name: "Dæmiskóli",
 				},
 			],
 		},
@@ -225,9 +225,9 @@ const SCHEMAS: Record<string, CommandSchema> = {
 			to: "2026-06-19",
 			items: [
 				{
-					calendar_event_id: 68172,
-					child_name: "Urður Lóa Axelsdóttir",
-					school_name: "Langholt",
+					calendar_event_id: 2001,
+					child_name: "Jóna Jónsdóttir",
+					school_name: "Dæmiskóli",
 					department_name: null,
 					group_name: null,
 					start_date: "2026-05-08T07:30:00Z",
@@ -264,16 +264,16 @@ const SCHEMAS: Record<string, CommandSchema> = {
 		example: {
 			items: [
 				{
-					child: { id: 86048, name: "Urður Lóa Axelsdóttir", school: "Langholt" },
+					child: { id: 12345, name: "Jóna Jónsdóttir", school: "Dæmiskóli" },
 					messages: [
 						{
-							id: 888828,
+							id: 1001,
 							created: "13.05.2026 10:23",
-							app_user_id: 118659,
-							app_user_name: "Kolbrún Þóra Eiríksdóttir",
+							app_user_id: 20002,
+							app_user_name: "Guðrún Kennari",
 							school_opened: "13.05.2026 11:14",
 							user_opened: "13.05.2026 10:23",
-							message: "Sæki kl 12",
+							message: "Sæki kl. 12 í dag",
 						},
 					],
 				},
@@ -298,8 +298,8 @@ const SCHEMAS: Record<string, CommandSchema> = {
 		example: {
 			registered: true,
 			body: {
-				child_id: 86048,
-				placement_id: 198421,
+				child_id: 12345,
+				placement_id: 54321,
 				date: "21.05.2026",
 				absence_comment: "fever",
 				absence_type_id: 2,
@@ -318,8 +318,8 @@ const SCHEMAS: Record<string, CommandSchema> = {
 		example: {
 			status: "ok",
 			checks: [
-				{ name: "auth", status: "ok", detail: "Token cached, user: Axel Paul Gunnarsson" },
-				{ name: "api_reachable", status: "ok", detail: "Got /app/user as Axel Paul Gunnarsson" },
+				{ name: "auth", status: "ok", detail: "Token cached, user: Jón Jónsson" },
+				{ name: "api_reachable", status: "ok", detail: "Got /app/user as Jón Jónsson" },
 			],
 		},
 	},

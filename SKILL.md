@@ -36,7 +36,7 @@ Use it when the user wants to know anything about their kid's day at preschool f
 a script or agent context — without opening the mobile app. Especially:
 
 - **"How did my kid eat today?"** — `vala lunch` (or `vala today`).
-- **"When did Urður arrive at school?"** — `vala attendance` / `vala today`.
+- **"When did Jóna arrive at school?"** — `vala attendance` / `vala today`.
 - **"What's on the school menu this week?"** — `vala lunch --week`.
 - **"Any upcoming school events?"** — `vala events`.
 - **"Did the school send me a message?"** — `vala chat`.
@@ -85,8 +85,8 @@ vala lunch --week --json          # weekdays only; weekends are filtered
 
 # multi-child families
 vala kids --json                  # list children + ids
-vala kids --set-default Urður     # one-time; subsequent commands default to her
-vala today --child Ægir --json    # override for one call
+vala kids --set-default Jóna      # one-time; subsequent commands default to her
+vala today --child Siggi --json   # override for one call
 
 # school
 vala events --days 30 --json

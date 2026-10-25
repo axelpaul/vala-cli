@@ -31,7 +31,7 @@ export function defaultBaseUrl(): string {
 	return process.env.VALA_ENV === "test" ? TEST_URL : PROD_URL;
 }
 
-export const USER_AGENT = "vala-cli/0.1.0 (+https://github.com/axelpgunnarsson/vala-cli)";
+export const USER_AGENT = "vala-cli/0.1.0 (+https://github.com/axelpaul/vala-cli)";
 
 export class ApiError extends Error {
 	constructor(
