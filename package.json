@@ -1,29 +1,30 @@
 {
-	"name": "vala-cli",
-	"version": "0.1.0",
-	"description": "CLI for the Vala Leikskóli parent app — lunch ratings, attendance, and more from your terminal.",
-	"module": "src/index.ts",
-	"type": "module",
-	"private": true,
-	"bin": {
-		"vala": "src/index.ts"
-	},
-	"scripts": {
-		"start": "bun src/index.ts",
-		"dev": "bun --watch src/index.ts",
-		"build": "bun build --compile src/index.ts --outfile vala",
-		"test": "bun test",
-		"typecheck": "bunx tsc --noEmit",
-		"lint": "bunx biome check src/",
-		"check": "bun run lint && bun run typecheck && bun run test"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.0.0",
-		"@types/bun": "latest",
-		"typescript": "^5.6.0"
-	},
-	"dependencies": {
-		"@modelcontextprotocol/sdk": "^1.32.1",
-		"zod": "^4.6.5"
-	}
+  "name": "vala-cli",
+  "version": "0.1.0",
+  "description": "CLI for the Vala Leikskóli parent app — lunch ratings, attendance, and more from your terminal.",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "vala": "src/index.ts"
+  },
+  "scripts": {
+    "start": "bun src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build --compile src/index.ts --outfile vala",
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit",
+    "lint": "bunx biome check src/",
+    "check": "bun run lint && bun run typecheck && bun run test",
+    "verify:mcp": "bun scripts/verify-mcp.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^4.6.5"
+  }
 }
