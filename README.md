@@ -1,5 +1,7 @@
 # vala-cli
 
+[MCP setup and client configuration](MCP.md)
+
 Headless CLI for the [Vala Leikskóli](https://leikskoli.vala.is/) parent app.
 Lunch ratings, attendance, school events, chat, and absence registration —
 without ever opening the mobile app.
@@ -41,8 +43,10 @@ The session token is cached at `~/.config/vala/auth.json` (mode `0600`).
 That file also contains your name, kennitala, and phone — fine for a single-user
 machine, **not** something you want syncing to a public backup.
 
-Sessions are short-lived (a few hours on paper, possibly much longer in
-practice). Re-run `vala login` when commands start returning *Session expired*.
+Vala's login response includes a `valid_to` timestamp, but the mobile app
+persists its token and may continue working beyond that advertised value. Treat
+it as informational rather than a scheduled reauthentication deadline. Re-run
+`vala login` only when a command is actually rejected as expired or unauthorized.
 
 ## Commands
 
@@ -146,3 +150,7 @@ See `src/lib/api.ts` for the typed client and the per-endpoint notes.
 - Notifications inbox (`/app/notifications`)
 - Multi-guardian access management (`/app/give-user-access` etc.)
 - Cancelling an absence (no documented endpoint found in the bundle)
+
+MCP now covers attendance, today, calendar ranges, recent chat, profile and
+readiness as well as kids/lunch. Exact-ID absence and local-default changes are
+opt-in and require per-call confirmation. See [MCP.md](MCP.md) for boundaries.
