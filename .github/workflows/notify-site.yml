@@ -1,0 +1,31 @@
+name: Notify mcp.axelpaul.is
+
+# Asks the catalogue site to sync now instead of at the next hourly run.
+# Needs a SITE_DISPATCH_TOKEN secret (see docs/adding-a-tool.md in
+# axelpaul/mcp.axelpaul.is); without it this does nothing and the hourly sync
+# still picks the change up.
+on:
+  release:
+    types: [published]
+  push:
+    branches: [main]
+    paths: [mcp-catalog.json]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the site
+        env:
+          TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "No SITE_DISPATCH_TOKEN secret; the hourly sync will pick this up."
+            exit 0
+          fi
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/axelpaul/mcp.axelpaul.is/dispatches \
+            -d "{\"event_type\":\"tool-updated\",\"client_payload\":{\"repo\":\"$REPO\"}}"

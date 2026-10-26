@@ -1,0 +1,107 @@
+{
+  "$schema": "https://mcp.axelpaul.is/catalog.schema.json",
+  "id": "vala",
+  "repo": "axelpaul/vala-cli",
+  "name": "Vala Leikskóli",
+  "service": "Vala Leikskóli",
+  "serviceUrl": "https://leikskoli.vala.is/",
+  "tagline": "Daily updates, menus and preschool messages in Vala",
+  "description": "Keep up with your child’s preschool day in Vala: meals, sleep, attendance, menus, events and messages from staff. You can also report illness or planned absence if you enable changes.",
+  "examples": [
+    "How well did my child eat lunch this week?",
+    "What's on the preschool calendar this month?",
+    "Let the preschool know my child is sick today."
+  ],
+  "category": "Kids & family",
+  "keywords": [
+    "leikskóli",
+    "preschool",
+    "kindergarten",
+    "matur"
+  ],
+  "auth": "phone or kennitala (Auðkenni)",
+  "binaries": true,
+  "tools": [
+    {
+      "name": "whoami",
+      "write": false,
+      "description": "Signed-in parent: name, email, language (kennitala and phone omitted)."
+    },
+    {
+      "name": "kids",
+      "write": false,
+      "description": "Children on the account with school and opening hours."
+    },
+    {
+      "name": "lunch",
+      "write": false,
+      "description": "Lunch menu and eat rating per child for a date or the 7 days ending on it."
+    },
+    {
+      "name": "attendance",
+      "write": false,
+      "description": "Arrival/departure, sleep, eat rating and staff comments for a day."
+    },
+    {
+      "name": "today",
+      "write": false,
+      "description": "Today's attendance plus each school's menu."
+    },
+    {
+      "name": "events",
+      "write": false,
+      "description": "School calendar events for a date range (default next 30 days)."
+    },
+    {
+      "name": "chat",
+      "write": false,
+      "description": "Latest chat messages between parent and school per child."
+    },
+    {
+      "name": "doctor",
+      "write": false,
+      "description": "Login state, token expiry, API reachability and visible children."
+    },
+    {
+      "name": "register_absence",
+      "write": true,
+      "description": "Register a sick or vacation absence for a child (requires confirm: true)."
+    }
+  ],
+  "commands": [
+    "vala login",
+    "vala kids",
+    "vala today",
+    "vala lunch --week",
+    "vala attendance --date 2026-05-15",
+    "vala events --days 60",
+    "vala chat --limit 5",
+    "vala absent --type sick",
+    "vala doctor",
+    "vala serve"
+  ],
+  "envVars": [
+    {
+      "name": "VALA_MCP_ENABLE_WRITES",
+      "description": "Set to 1 to expose register_absence in the MCP server."
+    },
+    {
+      "name": "VALA_ENV",
+      "description": "Set to test to use the Vala test backend."
+    },
+    {
+      "name": "VALA_CONFIG_DIR",
+      "description": "Override the config directory (default ~/.config/vala or $XDG_CONFIG_HOME/vala)."
+    }
+  ],
+  "writesEnvVar": "VALA_MCP_ENABLE_WRITES",
+  "is": {
+    "tagline": "Daglegar upplýsingar, matseðlar og skilaboð úr Völu",
+    "description": "Fylgstu með leikskóladeginum í Völu: hvernig barnið borðaði og svaf, mætingu, matseðli, viðburðum og skilaboðum frá starfsfólki. Þú getur líka tilkynnt veikindi eða frí ef þú leyfir breytingar.",
+    "examples": [
+      "Hvernig borðaði barnið mitt í hádeginu í vikunni?",
+      "Hvaða viðburðir eru fram undan í leikskólanum í þessum mánuði?",
+      "Láttu leikskólann vita að barnið mitt sé veikt í dag."
+    ]
+  }
+}
