@@ -1,0 +1,67 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: bash scripts/setup-mcp.sh
+      - run: bun run check
+      - run: bun run verify:mcp
+      - name: Check tag matches package version
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          test "${GITHUB_REF_NAME}" = "v${version}"
+      - name: Build release binaries and optional browser-helper bundles
+        shell: bash
+        run: |
+          cli="$(node -p 'Object.keys(require("./package.json").bin)[0]')"
+          entry="$(node -p 'Object.values(require("./package.json").bin)[0]')"
+          mkdir -p release-assets
+          for target in linux-x64 linux-arm64 darwin-x64 darwin-arm64 windows-x64; do
+            out="release-assets/${cli}-${target}"
+            suffix=""
+            if [ "$target" = windows-x64 ]; then suffix=".exe"; fi
+            bun build --compile --minify --target="bun-${target}" "$entry" --outfile "${out}${suffix}"
+            if [ -f dist/login-helper.mjs ]; then
+              bundle="$(mktemp -d)"
+              cp "${out}${suffix}" "${bundle}/${cli}${suffix}"
+              mkdir -p "${bundle}/dist"
+              cp dist/login-helper.mjs "${bundle}/dist/login-helper.mjs"
+              node -e 'const p=require("./package.json"); console.log(JSON.stringify({private:true,type:"module",dependencies:{"playwright-core":p.dependencies["playwright-core"]}}))' > "${bundle}/package.json"
+              printf '%s\n' 'Browser login: install Node.js, run npm install in this extracted directory, and provide the browser/CDP connection described in the project README. Raw binaries alone do not contain the browser helper.' > "${bundle}/BROWSER-LOGIN.txt"
+              tar -czf "release-assets/${cli}-${target}-with-browser-helper.tar.gz" -C "$bundle" .
+            fi
+          done
+          version="$(node -p 'require("./package.json").version')"
+          "release-assets/${cli}-linux-x64" --version | grep -F "$version"
+          cd release-assets
+          sha256sum * > SHA256SUMS
+      - name: Release notes
+        run: |
+          cat > release-notes.md <<'NOTES'
+          Customer CLI/MCP alignment release. MCP initialization and tool discovery were verified in isolated configurations; no account writes or transactions were performed.
+
+          Choose the binary for your platform and verify it against SHA256SUMS. Linux x64 was executed in CI; other targets were cross-compiled.
+
+          Abler and Dineout browser login also requires Node.js, playwright-core and an available browser/CDP connection. For these tools, use the corresponding -with-browser-helper.tar.gz bundle, extract it and run npm install in the extracted directory. The raw binary alone does not include that helper. See the project README for authentication requirements.
+          NOTES
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          body_path: release-notes.md
+          generate_release_notes: true
